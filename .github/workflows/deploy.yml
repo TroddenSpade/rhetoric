@@ -38,7 +38,7 @@ jobs:
       - name: Build
         run: npm run build:pages
         env:
-          VITE_BASE: /rhetoric/
+          VITE_BASE: /
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

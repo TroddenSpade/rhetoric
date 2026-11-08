@@ -2,10 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// Local dev and preview are served from "/". The GitHub Pages workflow in
-// .github/workflows/deploy.yml builds with VITE_BASE=/rhetoric/ because the
-// project is published as a Pages project site. Set VITE_BASE to override
-// (for example "/" when using a custom domain).
+// The site is served from the root of the custom domain
+// (https://rhetoric.parsasam.ir/), so both dev and production use base "/".
+// Set VITE_BASE to override if the site is moved to a project sub-path.
 const base = process.env.VITE_BASE || '/'
 
 // https://vite.dev/config/

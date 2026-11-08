@@ -2,7 +2,7 @@
 
 **A local-first writing studio for range, precision and structure.**
 
-🌐 **Live site:** https://parsasam.ir/rhetoric/
+🌐 **Live site:** https://rhetoric.parsasam.ir/
 
 Rhetoric is an installable web app (PWA) for the part of writing that happens after the first
 draft: finding the precise word, catching the spelling slip, breaking the monotone sentence, and
@@ -106,12 +106,12 @@ The workflow in `.github/workflows/deploy.yml` builds the site for GitHub Pages 
 
 1. Push to `main`. The workflow enables Pages automatically on the first run
    (`configure-pages` with `enablement: true`), so no manual settings change is needed.
-2. The site is published at **https://parsasam.ir/rhetoric/** and is built with
-   `VITE_BASE=/rhetoric/`. The `troddenspade.github.io/rhetoric/` address redirects there.
+2. The site is published at **https://rhetoric.parsasam.ir/** from the repository root
+   (`VITE_BASE=/`). `public/CNAME` pins the custom domain, and the GitHub Pages URL redirects there.
 
-**Custom domain?** Set `VITE_BASE=/` in the workflow (and in `package.json`'s `build:pages` if you
-like), add a `public/CNAME` file containing the domain, and configure the domain in the repository
-settings. The Vite config reads `VITE_BASE` from the environment.
+**Using a sub-path instead?** Set `VITE_BASE=/rhetoric/` in the workflow and in
+`package.json`'s `build:pages` script, then remove `public/CNAME`. The Vite config reads
+`VITE_BASE` from the environment.
 
 `scripts/postbuild.mjs` copies `index.html` to `404.html` so deep links boot the SPA on Pages, and
 writes `.nojekyll`.
