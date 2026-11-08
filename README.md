@@ -109,7 +109,7 @@ The workflow in `.github/workflows/deploy.yml` builds the site for GitHub Pages 
 2. The site is published at **https://rhetoric.parsasam.ir/** from the repository root
    (`VITE_BASE=/`). `public/CNAME` pins the custom domain, and the GitHub Pages URL redirects there.
 
-**Using a sub-path instead?** Set `VITE_BASE=/rhetoric/` in the workflow and in
+**Using a sub-path instead?** Set `VITE_BASE=/your-sub-path/` in the workflow and in
 `package.json`'s `build:pages` script, then remove `public/CNAME`. The Vite config reads
 `VITE_BASE` from the environment.
 
