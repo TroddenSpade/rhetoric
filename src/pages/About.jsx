@@ -82,7 +82,7 @@ export default function About() {
           <h2>What Rhetoric believes</h2>
 
           <h3>Revision is a set of small decisions.</h3>
-          <p>
+          <p className="prose__first">
             Good prose rarely arrives whole. It is made by noticing one thing at a time: the word
             you have used four times, the sentence that carries two ideas, the claim that leans on
             an adjective instead of a reason. The studio is designed to make those decisions

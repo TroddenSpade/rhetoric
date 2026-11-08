@@ -42,7 +42,7 @@ giving the argument a shape a reader can follow.
 - No account, no server, no analytics, no upload.
 - Drafts, title, theme, ignored words and structure checklists live in this browser’s
   `localStorage`. Clearing browser data clears the draft, so export a Markdown copy if you need one.
-- The wordbook and the spellchecker are bundled with the app and work offline.
+- The wordbook, the spellchecker and the three typefaces are bundled with the app and work offline.
 - Online word lookups send only the searched word to the free
   [Datamuse API](https://www.datamuse.com/api/); results are cached locally for 30 days and by the
   service worker. If the network is unavailable, the app falls back to the curated wordbook.
@@ -52,12 +52,27 @@ giving the argument a shape a reader can follow.
 ## Tech
 
 - **React 19 + Vite 7** with React Router 7.
-- **vite-plugin-pwa** — prompt-based updates, precached shell and runtime caching for fonts and
-  Datamuse.
+- **vite-plugin-pwa** — prompt-based updates, a precached shell (including the self-hosted fonts)
+  and runtime caching for Datamuse.
 - **nspell + dictionary-en** — the Hunspell dictionary is loaded lazily in a separate chunk, so the
   first paint is not blocked by the 550 kB dictionary.
-- **Fraunces, Source Serif 4 and Inter** for the typography.
-- No UI framework, no CSS-in-JS; the design is plain CSS with custom properties and a dark theme.
+- **Instrument Serif, Newsreader and Space Grotesk**, self-hosted as WOFF2 under `public/fonts/`.
+- No UI framework, no CSS-in-JS; the design is plain CSS with custom properties and a first-class
+  dark theme.
+- The **wordmark and app icon** are generated from Parisienne (`scripts/make-brand.mjs`): the
+  header and footer use a vector “Rhetoric” wordmark, while the installable icon is the script R
+  with a cobalt full stop.
+
+### Design notes
+
+The visual language is a deliberate bridge between the two sibling projects: Virgil contributes the
+warm paper, ink and brass; Cadence contributes the dark, instrument-panel precision. Rhetoric takes
+those materials somewhere more editorial: a single loud cobalt accent, oversized Instrument Serif
+display type, Newsreader for running text, Space Grotesk for the working labels, thick rules, hard
+offset shadows, a few anti-grid overlaps, and a calligraphic Parisienne wordmark with a script R
+icon. The brief was a
+2026 editorial studio rather than a generic dashboard: bold typography, one accent reserved for
+action, visible structure, and dark mode designed alongside light mode.
 
 ---
 
@@ -74,11 +89,13 @@ npm run preview    # preview the production build
 
 ```bash
 npm run sync:dictionary   # copy dictionary-en's .aff/.dic into src/lib/dictionary
-npm run icons             # regenerate the PNG icons (requires Python + Pillow)
+npm run icons             # regenerate the logo, favicon and PNG icons
 ```
 
 The dictionary is committed to the repository so a fresh clone can build without extra steps. Run
-`sync:dictionary` only when upgrading `dictionary-en`.
+`sync:dictionary` only when upgrading `dictionary-en`. `npm run icons` uses the committed
+`scripts/fonts/Parisienne-Regular.ttf` and the dev-only `opentype.js` + `sharp` packages to
+rebuild the brand files.
 
 ---
 
@@ -111,8 +128,11 @@ src/
   lib/             text analysis, spellchecking, word lookup, dictionary files
   pages/           Home, Write, Structures, Wordbook, Practice, About, NotFound
   styles/          theme variables, base styles, page styles
-public/            favicon, PWA icons
-scripts/           postbuild, dictionary sync, icon generation
+public/
+  fonts/           self-hosted Instrument Serif, Newsreader, Space Grotesk + OFL licences
+  brand/           generated logo mark
+  icons/           generated PWA icons
+scripts/           postbuild, dictionary sync, brand generation (Parisienne source in scripts/fonts)
 ```
 
 ---
@@ -134,4 +154,12 @@ scripts/           postbuild, dictionary sync, icon generation
 - Spellchecking: [wooorm/nspell](https://github.com/wooorm/nspell).
 - Word data: [Datamuse API](https://www.datamuse.com/api/).
 - The five canons of rhetoric, and the figures in the orator’s kit, after the classical tradition.
+- Interface typefaces: [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif),
+  [Newsreader](https://fonts.google.com/specimen/Newsreader) and
+  [Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk), all under the SIL Open Font
+  License. Licence texts are in `public/fonts/OFL-*`.
+- Logo lettering: [Parisienne](https://fonts.google.com/specimen/Parisienne) by Brian J.
+  Bonislawsky, also under the SIL Open Font License (`scripts/fonts/OFL-Parisienne.txt`). The
+  wordmark and the R icon are vector drawings derived from that face; the cobalt full stop is
+  original.
 - Built with [React](https://react.dev/) and [Vite](https://vite.dev/).

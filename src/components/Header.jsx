@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import Logo from './Logo.jsx'
+import Wordmark from './Wordmark.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import Icon from './Icon.jsx'
 
@@ -33,9 +33,8 @@ export default function Header() {
     <header className="site-header">
       <div className="container site-header__inner">
         <Link to="/" className="brand" aria-label="Rhetoric — home">
-          <Logo className="brand__mark" />
-          <span>
-            <span className="brand__name">RHETORIC</span>
+          <span className="brand__lockup">
+            <Wordmark className="brand__wordmark" height={36} />
             <span className="brand__tag">ars bene dicendi</span>
           </span>
         </Link>
@@ -47,6 +46,9 @@ export default function Header() {
             </NavLink>
           ))}
           <ThemeToggle />
+          <Link className="header-cta" to="/write">
+            Open studio <Icon name="arrow" size={13} />
+          </Link>
         </nav>
 
         <button

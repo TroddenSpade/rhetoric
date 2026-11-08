@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon.jsx'
+import Logo from '../components/Logo.jsx'
 import { categories, wordOfTheDay } from '../data/thesaurus.js'
 import { structures } from '../data/structures.js'
 import { promptOfTheDay } from '../data/prompts.js'
@@ -32,117 +33,189 @@ export default function Home() {
   return (
     <>
       <section className="hero">
+        <div className="hero__rail" aria-hidden="true">
+          <span>Inventio</span>
+          <span>Dispositio</span>
+          <span>Elocutio</span>
+        </div>
+
         <div className="container hero__inner">
-          <div className="hero__copy rise">
-            <p className="eyebrow">A studio for the working writer</p>
-            <h1>
-              Say the thing <span className="accent">better</span>.
-            </h1>
-            <p className="lead">
-              Rhetoric is a local-first writing studio for the three things that make prose worth
-              reading: the <strong>right word</strong>, the <strong>right spelling</strong>, and the{' '}
-              <strong>right shape</strong>. Bring a draft and leave with a clearer one.
-            </p>
-            <div className="hero__actions">
-              <Link className="btn btn--primary" to="/write">
-                Open the studio <Icon name="arrow" size={17} />
-              </Link>
-              <Link className="btn btn--ghost" to="/structures">
-                Explore the structures
-              </Link>
-            </div>
-            <ul className="hero__meta">
-              <li>
-                <strong>150+</strong> curated word entries
-              </li>
-              <li>
-                <strong>9</strong> structures &amp; outlines
-              </li>
-              <li>works offline</li>
-            </ul>
+          <div className="hero__masthead rise">
+            <span>Est. MMXXVI</span>
+            <span>A studio for the working writer</span>
+            <span>Local-first · Installable</span>
           </div>
 
-          <div className="hero__aside rise-2">
-            <article className="demo-card">
-              <header className="demo-card__head">
-                <span className="demo-card__label">
-                  <span className="demo-dot" aria-hidden="true" /> Live revision
-                </span>
-                <div className="demo-toggle" role="group" aria-label="Revision example">
-                  <button
-                    type="button"
-                    aria-pressed={mode === 'before'}
-                    className={mode === 'before' ? 'is-active' : ''}
-                    onClick={() => setMode('before')}
-                  >
-                    Before
-                  </button>
-                  <button
-                    type="button"
-                    aria-pressed={mode === 'after'}
-                    className={mode === 'after' ? 'is-active' : ''}
-                    onClick={() => setMode('after')}
-                  >
-                    After
-                  </button>
-                </div>
-              </header>
+          <div className="hero__grid">
+            <div className="hero__copy rise">
+              <p className="eyebrow">Rhetoric · ars bene dicendi</p>
+              <h1 className="hero__title">
+                Say the thing <em>better.</em>
+              </h1>
+              <p className="lead hero__lead">
+                Rhetoric is a local-first writing studio for the three things that make prose worth
+                reading: the <strong>right word</strong>, the <strong>right spelling</strong>, and
+                the <strong>right shape</strong>. Bring a draft and leave with a clearer one.
+              </p>
+              <div className="hero__actions">
+                <Link className="btn btn--primary" to="/write">
+                  Open the studio <Icon name="arrow" size={16} />
+                </Link>
+                <Link className="btn btn--ghost" to="/structures">
+                  Explore the structures
+                </Link>
+              </div>
+              <ul className="hero__meta">
+                <li>
+                  <strong>175</strong> curated words
+                </li>
+                <li>
+                  <strong>09</strong> writing shapes
+                </li>
+                <li>works offline</li>
+              </ul>
+            </div>
 
-              <p className="demo-text">{mode === 'before' ? before : after}</p>
-
-              <div className="demo-stats">
-                <span>
-                  <strong>{mode === 'before' ? 29 : 14}</strong> words
-                </span>
-                <span>
-                  <strong>{mode === 'before' ? 2 : 1}</strong>{' '}
-                  {mode === 'before' ? 'sentences' : 'sentence'}
-                </span>
-                <span>
-                  clarity <strong>{mode === 'before' ? 38 : 92}</strong>
-                </span>
+            <aside className="hero__aside rise-2" aria-label="Revision example">
+              <div className="hero__aside-label">
+                <span>01</span> A live revision
               </div>
 
-              <p className="demo-note">
-                {mode === 'before'
-                  ? 'Filler, vague nouns, and an even rhythm. The idea is there; the words are hiding it.'
-                  : 'The same idea, with the vague words removed and the sentence given a shape.'}
+              <article className="demo-card">
+                <header className="demo-card__head">
+                  <span className="demo-card__label">
+                    <span className="demo-dot" aria-hidden="true" /> Draft 03
+                  </span>
+                  <div className="demo-toggle" role="group" aria-label="Revision example">
+                    <button
+                      type="button"
+                      aria-pressed={mode === 'before'}
+                      className={mode === 'before' ? 'is-active' : ''}
+                      onClick={() => setMode('before')}
+                    >
+                      Before
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={mode === 'after'}
+                      className={mode === 'after' ? 'is-active' : ''}
+                      onClick={() => setMode('after')}
+                    >
+                      After
+                    </button>
+                  </div>
+                </header>
+
+                <p className="demo-text">{mode === 'before' ? before : after}</p>
+
+                <div className="demo-stats">
+                  <span>
+                    <strong>{mode === 'before' ? 29 : 14}</strong> words
+                  </span>
+                  <span>
+                    <strong>{mode === 'before' ? 2 : 1}</strong>{' '}
+                    {mode === 'before' ? 'sentences' : 'sentence'}
+                  </span>
+                  <span>
+                    <strong>{mode === 'before' ? 38 : 92}</strong> clarity
+                  </span>
+                </div>
+
+                <div className="demo-card__foot">
+                  <p className="demo-note">
+                    {mode === 'before'
+                      ? 'Filler, vague nouns and an even rhythm. The idea is there; the words are hiding it.'
+                      : 'The same idea, with the vague words removed and the sentence given a shape.'}
+                  </p>
+                  <span className="demo-stamp" aria-hidden="true">
+                    <span>Clarity</span>
+                    <strong>{mode === 'before' ? 38 : 92}</strong>
+                  </span>
+                </div>
+              </article>
+
+              <p className="hero__aside-note">
+                <span aria-hidden="true">+</span> Every suggestion is a question, not a correction.
               </p>
-            </article>
+            </aside>
+          </div>
+
+          <div className="hero__foot">
+            <span>Scroll to read the method</span>
+            <span aria-hidden="true">↓</span>
           </div>
         </div>
       </section>
 
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee__track">
+          {[0, 1].map((copy) => (
+            <div className="marquee__set" key={copy}>
+              <span>Range</span>
+              <span>Precision</span>
+              <span>Structure</span>
+              <span>Revision</span>
+              <span>Voice</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <section className="section">
         <div className="container">
-          <p className="eyebrow">Three disciplines</p>
-          <h2>What changes when you revise</h2>
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Three disciplines</p>
+              <h2>What changes when you revise</h2>
+            </div>
+            <p className="section-head__note">
+              Not a scoreboard. A set of small decisions you can make, one at a time.
+            </p>
+          </div>
+
           <div className="feature-grid">
-            <article className="feature card">
-              <span className="feature__num" aria-hidden="true">I</span>
-              <h3>Range</h3>
+            <article className="feature card feature--cobalt">
+              <div className="feature__head">
+                <span className="feature__num" aria-hidden="true">
+                  01
+                </span>
+                <span className="feature__label">Range</span>
+              </div>
+              <h3>A word you use five times becomes invisible.</h3>
               <p>
-                A word you use five times becomes invisible. The wordbook offers sharper synonyms,
-                and the studio shows the words you lean on before they become a tic.
+                The wordbook offers sharper synonyms, and the studio shows the words you lean on
+                before they become a tic.
               </p>
               <Link className="text-link" to="/wordbook">
                 Open the wordbook <Icon name="arrow" size={14} />
               </Link>
             </article>
-            <article className="feature card">
-              <span className="feature__num" aria-hidden="true">II</span>
-              <h3>Precision</h3>
+
+            <article className="feature card feature--vermilion">
+              <div className="feature__head">
+                <span className="feature__num" aria-hidden="true">
+                  02
+                </span>
+                <span className="feature__label">Precision</span>
+              </div>
+              <h3>Nothing is corrected behind your back.</h3>
               <p>
                 Spelling, filler, vague nouns and passive constructions are surfaced as you write.
-                Nothing is corrected behind your back; you decide what to keep.
+                You decide what to keep.
               </p>
               <Link className="text-link" to="/write">
                 Try the studio <Icon name="arrow" size={14} />
               </Link>
             </article>
-            <article className="feature card">
-              <span className="feature__num" aria-hidden="true">III</span>
-              <h3>Structure</h3>
+
+            <article className="feature card feature--brass">
+              <div className="feature__head">
+                <span className="feature__num" aria-hidden="true">
+                  03
+                </span>
+                <span className="feature__label">Structure</span>
+              </div>
+              <h3>A shape for the kind of thinking you are doing.</h3>
               <p>
                 Nine shapes for nine kinds of thinking: argument, comparison, problem and solution,
                 narrative, definition, cause and effect, description, rhetorical analysis, and the
@@ -159,7 +232,7 @@ export default function Home() {
       <section className="section-tight">
         <div className="container split">
           <div className="split__body">
-            <p className="eyebrow">A studio, not a scoreboard</p>
+            <p className="eyebrow">Field notes</p>
             <h2>Feedback you can argue with</h2>
             <p className="lead">
               Rhetoric does not rewrite for you. It shows you what a careful reader would notice:
@@ -226,7 +299,9 @@ export default function Home() {
                 className="craft-card card"
                 to={`/structures?blueprint=${structure.id}`}
               >
-                <span className="craft-card__index">{structures.indexOf(structure) + 1}</span>
+                <span className="craft-card__index">
+                  {String(structures.indexOf(structure) + 1).padStart(2, '0')}
+                </span>
                 <h3>{structure.name}</h3>
                 <p>{structure.tagline}</p>
                 <span className="craft-card__when">{structure.when}</span>
@@ -247,7 +322,7 @@ export default function Home() {
               <h2>{word.word}</h2>
               <span className="tag tag--gold">{word.pos}</span>
             </div>
-            <p>{word.gloss}</p>
+            <p className="word-day__gloss">{word.gloss}</p>
             <p className="word-day__example">“{word.example}”</p>
             <div className="chip-row">
               {word.synonyms
@@ -302,7 +377,10 @@ export default function Home() {
       <section className="section">
         <div className="container">
           <div className="cta-band">
-            <div>
+            <div className="cta-band__mark" aria-hidden="true">
+              <Logo size={150} />
+            </div>
+            <div className="cta-band__copy">
               <p className="eyebrow">The next draft</p>
               <h2>Bring a draft. Leave with a better one.</h2>
               <p>

@@ -20,13 +20,13 @@ export default defineConfig({
       injectRegister: null,
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'icons/icon-maskable-512.png'],
       manifest: {
-        name: 'Rhetoric — Write with range, precision and structure',
+        name: 'Rhetoric — a writing studio',
         short_name: 'Rhetoric',
         description:
-          'A local-first writing studio: find the precise word, check your spelling, vary your sentences and shape your argument.',
+          'Range, precision and structure for the working writer. A local-first studio with offline spellchecking, a curated wordbook and nine writing shapes.',
         lang: 'en',
-        theme_color: '#8c2a14',
-        background_color: '#f6f1e7',
+        theme_color: '#11151b',
+        background_color: '#f2ede1',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: base,
@@ -69,23 +69,6 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-stylesheets',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-webfonts',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
           {
             // Extra synonyms and definitions when the device is online; the
             // curated wordbook is always available offline.

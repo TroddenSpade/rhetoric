@@ -17,7 +17,7 @@ export default function ThemeToggle() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#14171d' : '#8c2a14')
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0e1116' : '#11151b')
   }, [theme])
 
   const next = theme === 'dark' ? 'light' : 'dark'
