@@ -2,7 +2,7 @@
 
 **A local-first writing studio for range, precision and structure.**
 
-🌐 **Live site:** https://troddenspade.github.io/rhetoric/
+🌐 **Live site:** https://parsasam.ir/rhetoric/
 
 Rhetoric is an installable web app (PWA) for the part of writing that happens after the first
 draft: finding the precise word, catching the spelling slip, breaking the monotone sentence, and
@@ -87,10 +87,10 @@ The dictionary is committed to the repository so a fresh clone can build without
 The workflow in `.github/workflows/deploy.yml` builds the site for GitHub Pages on every push to
 `main`:
 
-1. Enable **Settings → Pages → Build and deployment → GitHub Actions**.
-2. Push to `main`.
-3. The site is published at `https://<user>.github.io/rhetoric/` and is built with
-   `VITE_BASE=/rhetoric/`.
+1. Push to `main`. The workflow enables Pages automatically on the first run
+   (`configure-pages` with `enablement: true`), so no manual settings change is needed.
+2. The site is published at **https://parsasam.ir/rhetoric/** and is built with
+   `VITE_BASE=/rhetoric/`. The `troddenspade.github.io/rhetoric/` address redirects there.
 
 **Custom domain?** Set `VITE_BASE=/` in the workflow (and in `package.json`'s `build:pages` if you
 like), add a `public/CNAME` file containing the domain, and configure the domain in the repository
