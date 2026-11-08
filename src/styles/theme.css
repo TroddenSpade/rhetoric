@@ -1,0 +1,70 @@
+:root {
+  /* Palette — warm paper, ink, vermilion and a quiet gold */
+  --paper: #f6f1e7;
+  --paper-deep: #efe7d8;
+  --surface: #fbf7ef;
+  --surface-2: #f2ebde;
+  --surface-3: #ebe1cf;
+  --ink: #202733;
+  --ink-soft: #4d5665;
+  --ink-faint: #7d8696;
+  --vermilion: #b23a20;
+  --vermilion-deep: #8c2a14;
+  --vermilion-soft: #d4694f;
+  --gold: #a37b2e;
+  --gold-soft: #c7a45b;
+  --sage: #5f7358;
+  --sage-soft: #8ba183;
+  --ok: #4f7350;
+  --warn: #a86a1f;
+  --bad: #a83224;
+  --line: #ded3bf;
+  --line-soft: #e9e1d1;
+  --shadow: 0 1px 2px rgba(32, 39, 51, 0.05), 0 12px 32px rgba(32, 39, 51, 0.08);
+  --shadow-sm: 0 1px 2px rgba(32, 39, 51, 0.07);
+  --highlight: rgba(199, 164, 91, 0.3);
+  --ink-on-accent: #fdf7eb;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Layout */
+  --measure: 68ch;
+  --radius: 12px;
+  --radius-sm: 7px;
+  --header-h: 66px;
+
+  color-scheme: light;
+}
+
+/* Night desk */
+:root[data-theme='dark'] {
+  --paper: #14171d;
+  --paper-deep: #191d25;
+  --surface: #1b1f27;
+  --surface-2: #222731;
+  --surface-3: #2a303b;
+  --ink: #ece5d8;
+  --ink-soft: #b9b2a6;
+  --ink-faint: #8a8478;
+  --vermilion: #e0795f;
+  --vermilion-deep: #c96348;
+  --vermilion-soft: #8f4330;
+  --gold: #d9b979;
+  --gold-soft: #ad8d4d;
+  --sage: #94ad8a;
+  --sage-soft: #62775b;
+  --ok: #8fae7a;
+  --warn: #d8a45a;
+  --bad: #e08a7a;
+  --line: #313640;
+  --line-soft: #282e37;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 34px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --highlight: rgba(217, 185, 121, 0.22);
+  --ink-on-accent: #17130e;
+  color-scheme: dark;
+}

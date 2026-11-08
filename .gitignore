@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+dev-dist/
+
+# PWA generated files
+public/sw.js
+public/workbox-*.js
+public/registerSW.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.local
+
+# Playwright / browser tooling artefacts
+playwright-report/
+test-results/
+.playwright-mcp/
