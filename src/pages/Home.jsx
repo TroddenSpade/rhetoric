@@ -33,12 +33,6 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-        <div className="hero__rail" aria-hidden="true">
-          <span>Inventio</span>
-          <span>Dispositio</span>
-          <span>Elocutio</span>
-        </div>
-
         <div className="container hero__inner">
           <div className="hero__masthead rise">
             <span>Est. MMXXVI</span>
@@ -48,6 +42,11 @@ export default function Home() {
 
           <div className="hero__grid">
             <div className="hero__copy rise">
+              <div className="hero__rail" aria-hidden="true">
+                <span>Inventio</span>
+                <span>Dispositio</span>
+                <span>Elocutio</span>
+              </div>
               <p className="eyebrow">Rhetoric · ars bene dicendi</p>
               <h1 className="hero__title">
                 Say the thing <em>better.</em>
