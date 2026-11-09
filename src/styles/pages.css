@@ -36,7 +36,7 @@
 }
 .hero__rail {
   position: absolute;
-  left: max(-51px, calc(1.1rem - (100vw - 1180px) / 2));
+  left: max(-90px, calc(1.1rem - (100vw - 1180px) / 2));
   top: 0;
   bottom: 0;
   display: flex;
@@ -3017,7 +3017,7 @@
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 1280px) {
+@media (max-width: 1360px) {
   .hero__rail {
     display: none;
   }
