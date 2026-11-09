@@ -5,9 +5,11 @@ import {
   normalizeProgress,
   readLocalProgress,
 } from './progress.js'
+import { normalizeLlmSettings, validateLlmSettings } from './llm.js'
 
 const AccountContext = createContext(null)
 const TABLE = 'rhetoric_progress'
+const LLM_TABLE = 'rhetoric_llm_settings'
 
 function accountRedirectUrl() {
   if (typeof window === 'undefined') return undefined
@@ -44,6 +46,10 @@ export function AccountProvider({ children }) {
   const [remote, setRemote] = useState(null)
   const [remoteLoading, setRemoteLoading] = useState(false)
   const [lastSyncedAt, setLastSyncedAt] = useState(null)
+  const [llm, setLlm] = useState(null)
+  const [llmLoading, setLlmLoading] = useState(false)
+  const [llmOperation, setLlmOperation] = useState('idle')
+  const [llmError, setLlmError] = useState(null)
 
   // Sync is optional. Load the client only when this build has credentials.
   useEffect(() => {
@@ -75,6 +81,9 @@ export function AccountProvider({ children }) {
         if (!next) {
           setRemote(null)
           setLastSyncedAt(null)
+          setLlm(null)
+          setLlmError(null)
+          setLlmOperation('idle')
         }
       })
       subscription = listener?.subscription ?? null
@@ -133,13 +142,43 @@ export function AccountProvider({ children }) {
     }
   }, [client, session])
 
+  const refreshLlm = useCallback(async () => {
+    if (!client || !session?.user) {
+      setLlm(null)
+      return null
+    }
+
+    setLlmLoading(true)
+    try {
+      const { data, error: selectError } = await client
+        .from(LLM_TABLE)
+        .select('api_url, api_key, model, updated_at')
+        .eq('user_id', session.user.id)
+        .maybeSingle()
+
+      if (selectError) throw selectError
+      const settings = data ? normalizeLlmSettings(data) : null
+      setLlm(settings)
+      setLlmError(null)
+      return settings
+    } catch (caught) {
+      setLlmError(readableError(caught))
+      return null
+    } finally {
+      setLlmLoading(false)
+    }
+  }, [client, session])
+
   useEffect(() => {
     if (!session) {
       setRemote(null)
+      setLlm(null)
+      setLlmError(null)
       return
     }
     void refreshRemote()
-  }, [session, refreshRemote])
+    void refreshLlm()
+  }, [session, refreshRemote, refreshLlm])
 
   const signIn = useCallback(
     async (email) => {
@@ -183,6 +222,9 @@ export function AccountProvider({ children }) {
     setSession(null)
     setRemote(null)
     setLastSyncedAt(null)
+    setLlm(null)
+    setLlmError(null)
+    setLlmOperation('idle')
     setError(null)
     setOperation('idle')
   }, [client])
@@ -298,6 +340,80 @@ export function AccountProvider({ children }) {
     }
   }, [client, session])
 
+  const saveLlm = useCallback(
+    async ({ url, apiKey, model }) => {
+      if (!client || !session?.user) {
+        return { ok: false, error: 'Sign in before saving an LLM connection.' }
+      }
+      if (offline()) {
+        return { ok: false, error: 'You are offline. Reconnect to save the connection.' }
+      }
+
+      const settings = normalizeLlmSettings({
+        url,
+        apiKey: apiKey?.trim() ? apiKey : llm?.apiKey || '',
+        model,
+      })
+      const validationError = validateLlmSettings(settings)
+      if (validationError) return { ok: false, error: validationError }
+
+      setLlmOperation('saving')
+      setLlmError(null)
+      const savedAt = new Date().toISOString()
+
+      try {
+        const { error: saveError } = await client.from(LLM_TABLE).upsert(
+          {
+            user_id: session.user.id,
+            api_url: settings.url,
+            api_key: settings.apiKey,
+            model: settings.model,
+            updated_at: savedAt,
+          },
+          { onConflict: 'user_id' },
+        )
+        if (saveError) throw saveError
+
+        setLlm({ ...settings, updatedAt: savedAt })
+        setLlmOperation('idle')
+        return { ok: true, settings }
+      } catch (caught) {
+        const message = readableError(caught)
+        setLlmError(message)
+        setLlmOperation('idle')
+        return { ok: false, error: message }
+      }
+    },
+    [client, session, llm],
+  )
+
+  const deleteLlm = useCallback(async () => {
+    if (!client || !session?.user) {
+      return { ok: false, error: 'Sign in first.' }
+    }
+    if (offline()) {
+      return { ok: false, error: 'You are offline. Reconnect to remove the connection.' }
+    }
+
+    setLlmOperation('removing')
+    setLlmError(null)
+    try {
+      const { error: deleteError } = await client
+        .from(LLM_TABLE)
+        .delete()
+        .eq('user_id', session.user.id)
+      if (deleteError) throw deleteError
+      setLlm(null)
+      setLlmOperation('idle')
+      return { ok: true }
+    } catch (caught) {
+      const message = readableError(caught)
+      setLlmError(message)
+      setLlmOperation('idle')
+      return { ok: false, error: message }
+    }
+  }, [client, session])
+
   const value = useMemo(
     () => ({
       configured: supabaseConfigured,
@@ -314,12 +430,19 @@ export function AccountProvider({ children }) {
       remote,
       remoteLoading,
       lastSyncedAt,
+      llm,
+      llmLoading,
+      llmOperation,
+      llmError,
       signIn,
       signOut,
       saveProgress,
       fetchProgress,
       deleteRemote,
       refreshRemote,
+      saveLlm,
+      deleteLlm,
+      refreshLlm,
     }),
     [
       loading,
@@ -329,12 +452,19 @@ export function AccountProvider({ children }) {
       remote,
       remoteLoading,
       lastSyncedAt,
+      llm,
+      llmLoading,
+      llmOperation,
+      llmError,
       signIn,
       signOut,
       saveProgress,
       fetchProgress,
       deleteRemote,
       refreshRemote,
+      saveLlm,
+      deleteLlm,
+      refreshLlm,
     ],
   )
 

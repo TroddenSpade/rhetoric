@@ -3648,6 +3648,49 @@
   margin-top: 2px;
 }
 
+.account-llm {
+  display: grid;
+  gap: 1rem;
+}
+.account-llm__intro {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+.account-llm__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.8rem;
+}
+.account-llm__form .field--wide {
+  grid-column: 1 / -1;
+}
+.account-llm__foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.account-llm__hint {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+.account-llm__error {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.account-llm__error .account-message {
+  flex: 1;
+  min-width: 200px;
+  margin: 0;
+}
+
 @media (max-width: 1080px) {
   .account-layout {
     grid-template-columns: minmax(0, 1fr) 290px;
@@ -3680,6 +3723,9 @@
   }
   .account-form .btn {
     width: 100%;
+  }
+  .account-llm__form {
+    grid-template-columns: 1fr;
   }
   .account-identity {
     flex-wrap: wrap;

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Icon from '../components/Icon.jsx'
 import Toast from '../components/Toast.jsx'
 import { useAccount } from '../lib/account.jsx'
+import { maskApiKey, validateLlmSettings } from '../lib/llm.js'
 import {
   progressFingerprint,
   readLocalProgress,
@@ -49,11 +50,18 @@ export default function Account() {
     remote,
     remoteLoading,
     lastSyncedAt,
+    llm,
+    llmLoading,
+    llmOperation,
+    llmError,
     signIn,
     signOut,
     saveProgress,
     fetchProgress,
     deleteRemote,
+    saveLlm,
+    deleteLlm,
+    refreshLlm,
   } = useAccount()
 
   const [address, setAddress] = useState('')
@@ -63,6 +71,11 @@ export default function Account() {
   const [revision, setRevision] = useState(0)
   const [confirmFetch, setConfirmFetch] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [llmUrl, setLlmUrl] = useState('')
+  const [llmModel, setLlmModel] = useState('')
+  const [llmApiKey, setLlmApiKey] = useState('')
+  const [llmNotice, setLlmNotice] = useState(null)
+  const [confirmRemoveLlm, setConfirmRemoveLlm] = useState(false)
 
   const local = useMemo(() => readLocalProgress(), [revision])
   const localSummary = useMemo(() => summarizeProgress(local), [local])
@@ -91,6 +104,14 @@ export default function Account() {
       window.removeEventListener('focus', refresh)
     }
   }, [])
+
+  // Keep the connection form in step with the account row without putting the
+  // saved API key back into the DOM.
+  useEffect(() => {
+    setLlmUrl(llm?.url || '')
+    setLlmModel(llm?.model || '')
+    setLlmApiKey('')
+  }, [llm])
 
   const status = (() => {
     if (!configured) return { tone: 'muted', label: 'Local only' }
@@ -158,7 +179,50 @@ export default function Account() {
     await signOut()
     setConfirmFetch(false)
     setConfirmDelete(false)
+    setConfirmRemoveLlm(false)
+    setLlmNotice(null)
     setToast('Signed out. Your progress stays on this device.')
+  }
+
+  const handleSaveLlm = async (event) => {
+    event.preventDefault()
+    setConfirmRemoveLlm(false)
+    const validationError = validateLlmSettings({ url: llmUrl, model: llmModel })
+    if (validationError) {
+      setLlmNotice({ tone: 'error', text: validationError })
+      return
+    }
+
+    const keepsSavedKey = !llmApiKey.trim() && Boolean(llm?.apiKey)
+    const result = await saveLlm({ url: llmUrl, apiKey: llmApiKey, model: llmModel })
+    if (result.ok) {
+      setLlmApiKey('')
+      setLlmNotice({
+        tone: 'ok',
+        text: keepsSavedKey
+          ? 'Connection updated. Your saved API key was kept.'
+          : 'Connection saved to your account.',
+      })
+      setToast('LLM connection saved to your account.')
+    } else {
+      setLlmNotice({ tone: 'error', text: result.error || 'Could not save the connection.' })
+    }
+  }
+
+  const handleRemoveLlm = async () => {
+    const result = await deleteLlm()
+    setConfirmRemoveLlm(false)
+    if (result.ok) {
+      setLlmNotice({ tone: 'ok', text: 'LLM connection removed from your account.' })
+      setToast('LLM connection removed.')
+    } else {
+      setLlmNotice({ tone: 'error', text: result.error || 'Could not remove the connection.' })
+    }
+  }
+
+  const handleRetryLlm = async () => {
+    setLlmNotice(null)
+    await refreshLlm()
   }
 
   return (
@@ -335,6 +399,151 @@ export default function Account() {
             </section>
           )}
 
+          {signedIn && (
+            <section className="account-panel account-llm card">
+              <div className="account-panel__head">
+                <div>
+                  <p className="eyebrow">LLM connection</p>
+                  <h2>Bring your own model</h2>
+                </div>
+                <span
+                  className={`account-pill account-pill--${
+                    llmLoading ? 'busy' : llm ? 'ok' : 'muted'
+                  }`}
+                >
+                  <span className="account-pill__dot" />
+                  {llmLoading ? 'Checking' : llm ? 'Saved' : 'Not set'}
+                </span>
+              </div>
+              <p className="account-llm__intro">
+                Save an OpenAI-compatible endpoint for LLM-assisted writing. The connection
+                belongs to your account and is available on every device you sign in to.
+              </p>
+
+              <form className="account-llm__form" onSubmit={handleSaveLlm}>
+                <div className="field field--wide">
+                  <label htmlFor="llm-url">API URL</label>
+                  <input
+                    id="llm-url"
+                    className="input"
+                    type="url"
+                    inputMode="url"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="https://api.openai.com/v1"
+                    value={llmUrl}
+                    onChange={(event) => setLlmUrl(event.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="llm-model">Model</label>
+                  <input
+                    id="llm-model"
+                    className="input"
+                    type="text"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="gpt-4o-mini"
+                    value={llmModel}
+                    onChange={(event) => setLlmModel(event.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="llm-key">API key</label>
+                  <input
+                    id="llm-key"
+                    className="input"
+                    type="password"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder={
+                      llm?.apiKey ? 'Leave blank to keep the saved key' : 'Optional for local endpoints'
+                    }
+                    value={llmApiKey}
+                    onChange={(event) => setLlmApiKey(event.target.value)}
+                  />
+                  {llm?.apiKey && (
+                    <p className="account-llm__hint">
+                      Saved key {maskApiKey(llm.apiKey)}. Leave blank to keep it.
+                    </p>
+                  )}
+                </div>
+                <div className="account-llm__foot">
+                  <button
+                    className="btn btn--primary"
+                    type="submit"
+                    disabled={llmOperation === 'saving'}
+                  >
+                    <Icon name="upload" size={15} />
+                    {llmOperation === 'saving' ? 'Saving…' : 'Save connection'}
+                  </button>
+                  {llm && !confirmRemoveLlm && (
+                    <button
+                      className="btn btn--quiet"
+                      type="button"
+                      onClick={() => setConfirmRemoveLlm(true)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </form>
+
+              {confirmRemoveLlm && (
+                <div className="account-confirm" role="alert">
+                  <p>
+                    <strong>Remove this LLM connection?</strong> The saved URL, model and API key
+                    will be deleted from your account. Your writing progress is not affected.
+                  </p>
+                  <div className="account-actions">
+                    <button
+                      className="btn btn--danger btn--sm"
+                      type="button"
+                      onClick={handleRemoveLlm}
+                      disabled={llmOperation === 'removing'}
+                    >
+                      {llmOperation === 'removing' ? 'Removing…' : 'Yes, remove it'}
+                    </button>
+                    <button
+                      className="btn btn--quiet btn--sm"
+                      type="button"
+                      onClick={() => setConfirmRemoveLlm(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {llmNotice && (
+                <p
+                  className={`account-message account-message--${llmNotice.tone}`}
+                  role={llmNotice.tone === 'error' ? 'alert' : 'status'}
+                >
+                  {llmNotice.text}
+                </p>
+              )}
+
+              {llmError && (
+                <div className="account-llm__error" role="alert">
+                  <p className="account-message account-message--error">{llmError}</p>
+                  <button
+                    className="btn btn--quiet btn--sm"
+                    type="button"
+                    onClick={handleRetryLlm}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              <p className="account-note">
+                <Icon name="info" size={14} /> The key is stored in your account, not in this
+                device’s local draft. Use a key with only the permissions the connection needs.
+              </p>
+            </section>
+          )}
+
           <div className="account-snapshots">
             <article className="account-snapshot card">
               <div className="account-snapshot__head">
@@ -461,6 +670,10 @@ export default function Account() {
                 <strong>The practice record.</strong> Session scores, accuracy and the best set.
               </li>
               <li>
+                <strong>The LLM connection.</strong> Endpoint URL, model and API key stay with
+                your account, not in local progress.
+              </li>
+              <li>
                 <strong>Not your preferences.</strong> Theme and install settings stay on this
                 device.
               </li>
@@ -476,7 +689,7 @@ export default function Account() {
             </p>
             <p className="small muted account-privacy">
               <Icon name="info" size={14} /> The public Supabase key can only reach the signed-in
-              user’s own row; row-level security protects the table.
+              user’s own row; row-level security protects both account tables.
             </p>
           </article>
         </aside>

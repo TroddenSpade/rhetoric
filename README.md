@@ -141,8 +141,8 @@ Enable it once:
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. In **SQL Editor**, run [`supabase/schema.sql`](supabase/schema.sql). It creates the
-   `rhetoric_progress` table and row-level security policies so each user can only read and write
-   their own row.
+   `rhetoric_progress` and `rhetoric_llm_settings` tables with row-level security policies so each
+   user can only read and write their own rows. Re-run it after upgrading to add the LLM table.
 3. In **Authentication → URL Configuration**, set **Site URL** to
    `https://rhetoric.parsasam.ir/` and add these **Redirect URLs**:
    `https://rhetoric.parsasam.ir/account` and `http://localhost:5173/account`. The email link
@@ -169,6 +169,11 @@ What the saved copy contains:
 - **The studio** — draft text, title, chosen blueprint, ignored spellings and checklist ticks.
 - **The practice record** — the last 50 session scores, used to show accuracy and the best set.
 - **Not preferences** — theme and install-prompt state stay on each device.
+
+The account page also stores an optional LLM connection: an OpenAI-compatible API URL, a model
+name and an API key. It lives in `rhetoric_llm_settings` with the same row-level security, and the
+key is never written to the browser’s local storage. This stores the connection; it does not send
+drafts anywhere by itself.
 
 Saving and loading are separate actions. **Save to account** overwrites the account copy with the
 current local progress; **Load account copy** asks first, then replaces the draft, checklist and
