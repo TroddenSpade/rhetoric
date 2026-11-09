@@ -147,8 +147,8 @@ Enable it once:
    `https://rhetoric.parsasam.ir/` and add these **Redirect URLs**:
    `https://rhetoric.parsasam.ir/account` and `http://localhost:5173/account`. The email link
    returns to the account page, where Supabase’s PKCE flow completes.
-4. Copy the project URL and the **anon public** key from **Project Settings → API** into
-   `.env.local`:
+4. Copy the project URL and the **anon public** or **publishable** key from
+   **Project Settings → API** into `.env.local`:
 
    ```bash
    cp .env.example .env.local
@@ -161,8 +161,8 @@ Enable it once:
    workflow passes them into the build.
 
 Then open **Account**, enter an email, and follow the one-time link. There is no password to store.
-The anon key is safe to ship in the bundle because row-level security restricts every request to
-the signed-in user.
+The anon or publishable key is safe to ship in the bundle because row-level security restricts
+every request to the signed-in user.
 
 What the saved copy contains:
 
