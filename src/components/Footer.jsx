@@ -6,6 +6,7 @@ const links = [
   { to: '/structures', label: 'Structures' },
   { to: '/wordbook', label: 'Wordbook' },
   { to: '/practice', label: 'Practice' },
+  { to: '/account', label: 'Account' },
   { to: '/about', label: 'About' },
 ]
 
@@ -21,8 +22,9 @@ export default function Footer() {
               <Wordmark height={58} />
             </div>
             <p className="site-footer__tagline">
-              A local-first writing studio for range, precision and structure. Your drafts stay on
-              this device; the wordbook and spellchecker work offline.
+              A local-first writing studio for range, precision and structure. Drafts stay on
+              this device by default; sign in to carry them between devices, or keep working
+              offline.
             </p>
             <p className="site-footer__note">Ars bene dicendi · Est. MMXXVI</p>
           </div>

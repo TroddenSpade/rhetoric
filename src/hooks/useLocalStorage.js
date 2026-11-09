@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // A tiny persistent-state hook backed by localStorage.
 export function useLocalStorage(key, initialValue) {
+  const initialRef = useRef(initialValue)
   const [value, setValue] = useState(() => {
     if (typeof window === 'undefined') return initialValue
     try {
@@ -19,6 +20,33 @@ export function useLocalStorage(key, initialValue) {
       /* storage unavailable — ignore */
     }
   }, [key, value])
+
+  // A fetched account copy writes straight to localStorage and announces the
+  // key. Native `storage` events keep a second tab in step as well.
+  useEffect(() => {
+    const sync = (event) => {
+      if (event.type === 'storage' && event.key !== key) return
+      if (event.type === 'rhetoric:storage' && event.detail?.key !== key) return
+      try {
+        const next =
+          event.type === 'storage'
+            ? event.newValue === null
+              ? initialRef.current
+              : JSON.parse(event.newValue)
+            : event.detail.value
+        setValue(next)
+      } catch {
+        /* a malformed value should not break the page */
+      }
+    }
+
+    window.addEventListener('storage', sync)
+    window.addEventListener('rhetoric:storage', sync)
+    return () => {
+      window.removeEventListener('storage', sync)
+      window.removeEventListener('rhetoric:storage', sync)
+    }
+  }, [key])
 
   return [value, setValue]
 }

@@ -7,6 +7,8 @@ import {
   pickSession,
 } from '../data/exercises.js'
 import { prompts, promptOfTheDay } from '../data/prompts.js'
+import { useLocalStorage } from '../hooks/useLocalStorage.js'
+import { summarizePractice } from '../lib/progress.js'
 
 function buildSession(type = 'all') {
   if (type === 'all') return pickSession(8)
@@ -29,7 +31,9 @@ export default function Practice() {
   const [answers, setAnswers] = useState({})
   const [finished, setFinished] = useState(false)
   const [prompt, setPrompt] = useState(() => promptOfTheDay())
+  const [practice, setPractice] = useLocalStorage('rhetoric:practice', { sessions: [] })
 
+  const record = useMemo(() => summarizePractice(practice), [practice])
   const current = session[index]
   const answered = current ? answers[current.id] : undefined
   const isAnswered = answered !== undefined
@@ -65,6 +69,15 @@ export default function Practice() {
 
   const next = () => {
     if (isLast) {
+      setPractice((previous) => {
+        const sessions = Array.isArray(previous?.sessions) ? previous.sessions : []
+        return {
+          sessions: [
+            { at: Date.now(), type, score, total: session.length },
+            ...sessions,
+          ].slice(0, 50),
+        }
+      })
       setFinished(true)
       return
     }
@@ -269,6 +282,40 @@ export default function Practice() {
         </div>
 
         <aside className="practice-aside">
+          <article className="record-card card">
+            <div className="record-card__head">
+              <p className="eyebrow">Your record</p>
+              <span className="tag">
+                {record.sessions} {record.sessions === 1 ? 'set' : 'sets'}
+              </span>
+            </div>
+            <div className="record-card__stats">
+              <div>
+                <strong>{record.accuracy}%</strong>
+                <span>accuracy</span>
+              </div>
+              <div>
+                <strong>{record.best}%</strong>
+                <span>best set</span>
+              </div>
+              <div>
+                <strong>{record.answered}</strong>
+                <span>questions</span>
+              </div>
+            </div>
+            <p className="small muted">
+              {record.lastAt
+                ? `Last set ${new Date(record.lastAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                  })}.`
+                : 'Finish a set to start a record on this device.'}
+            </p>
+            <Link className="text-link" to="/account">
+              Save it to your account <Icon name="arrow" size={14} />
+            </Link>
+          </article>
+
           <article className="prompt-card card">
             <p className="eyebrow">Warm-up · {prompt.mode}</p>
             <h2>{prompt.title}</h2>

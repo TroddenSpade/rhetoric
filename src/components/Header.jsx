@@ -9,6 +9,7 @@ const links = [
   { to: '/structures', label: 'Structures' },
   { to: '/wordbook', label: 'Wordbook' },
   { to: '/practice', label: 'Practice' },
+  { to: '/account', label: 'Account' },
   { to: '/about', label: 'About' },
 ]
 
